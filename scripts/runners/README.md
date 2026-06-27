@@ -5,7 +5,7 @@
 ## quick start
 
 ```bash
-# Setup: API key must be loadable (either in env or in /home/iris/repos/iris-lab/.env)
+# Setup: API key must be loadable (either in env or in <repo>/.env)
 # typer base-repo must exist at base-repo/typer (see base-repo/BASE_VERIFICATION.md)
 
 # Dry run (sets up repo, prints task prompt, no API call)

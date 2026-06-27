@@ -28,9 +28,9 @@
   "related_identifiers": [
     {
       "relation": "isSupplementTo",
-      "identifier": "https://github.com/kenimo49/iris-lab/tree/main/experiments/025-orchestrator-vs-solo",
+      "identifier": "https://github.com/kenimo49/free-executor-paradox",
       "resource_type": "software"
     }
   ],
-  "notes": "Reproducibility: all code, harness, breakage injection scripts, runner, and analysis are in the linked GitHub repository under experiments/025-orchestrator-vs-solo. The base repository (tiangolo/typer at tag 0.26.8, commit b210c0e) is MIT-licensed and is cloned at experiment time rather than vendored. Local executor (arm B) uses Ollama hosting of qwen3.5:9b via the qwen-task wrapper from iris-hub. Pricing assumes Anthropic public rate card (Opus 4.7: $15/$75 per M input/output, Haiku 4.5: $1/$5; cache write 1.25x input rate, cache read 0.10x input rate; Qwen=0 marginal cost). Peer review note: this preprint was checked with codex CLI in read-only sandbox (3 review passes) prior to upload; codex reviews are recorded in the GitHub repository's issue #4 history."
+  "notes": "Reproducibility: all code, harness, breakage injection scripts, runner, and analysis are in the linked GitHub repository at the repository root. The base repository (tiangolo/typer at tag 0.26.8, commit b210c0e) is MIT-licensed and is cloned at experiment time rather than vendored. Local executor (arm B) uses Ollama hosting of qwen3.5:9b via the qwen-task wrapper bundled at scripts/qwen-task.sh. Pricing assumes Anthropic public rate card (Opus 4.7: $15/$75 per M input/output, Haiku 4.5: $1/$5; cache write 1.25x input rate, cache read 0.10x input rate; Qwen=0 marginal cost). Peer review note: this preprint was checked with codex CLI in read-only sandbox (3 review passes) prior to upload; codex reviews are recorded in the GitHub repository (commits 5417a01 \u2192 da3ab60 \u2192 bafa271 trace the codex revisions)."
 }

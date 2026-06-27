@@ -433,12 +433,12 @@ The contribution we hope is most reusable is the methodology, not the verdict. A
 
 \section*{Reproducibility}
 
-Tested on Ubuntu 22.04 with Python 3.10+ (typer requires \verb|>=3.10|), \texttt{uv} 0.4+, and \texttt{anthropic} Python SDK 0.83+. The Qwen executor uses Ollama 0.4+ on a Tailscale-reachable host running model \texttt{qwen3.5:9b}, exposed via the \texttt{qwen-task --agent} wrapper from \texttt{iris-hub}.
+Tested on Ubuntu 22.04 with Python 3.10+ (typer requires \verb|>=3.10|), \texttt{uv} 0.4+, and \texttt{anthropic} Python SDK 0.83+. The Qwen executor uses Ollama 0.4+ on a Tailscale-reachable host running model \texttt{qwen3.5:9b}, exposed via the \texttt{qwen-task --agent} wrapper bundled at \texttt{scripts/qwen-task.sh} (the wrapper itself depends on the \texttt{claw} binary; see README for setup).
 
 \begin{verbatim}
-# 1. Clone iris-lab + go to experiment dir
-git clone https://github.com/kenimo49/iris-lab
-cd iris-lab/experiments/025-orchestrator-vs-solo
+# 1. Clone this repo
+git clone https://github.com/kenimo49/free-executor-paradox
+cd free-executor-paradox
 
 # 2. Clone base repo (typer at 0.26.8, commit b210c0e)
 git clone --depth 1 --branch 0.26.8 \
@@ -448,7 +448,7 @@ git clone --depth 1 --branch 0.26.8 \
 # 3. Confirm green base on the harness
 ./harness.sh --json-only   # expect exit_code=0, 1356 passed
 
-# 4. Provide ANTHROPIC_API_KEY (env or iris-lab/.env)
+# 4. Provide ANTHROPIC_API_KEY (env or <repo>/.env)
 export ANTHROPIC_API_KEY=...
 
 # 5. (Optional) point at Ollama host for arm B

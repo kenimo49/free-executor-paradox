@@ -2,7 +2,7 @@
 
 **Author**: Ken Imoto (Propel-Lab LLC)
 **Date**: 2026-06-27
-**Code & data**: <https://github.com/kenimo49/iris-lab/tree/main/experiments/025-orchestrator-vs-solo>
+**Code & data**: <https://github.com/kenimo49/free-executor-paradox>
 **License**: CC-BY 4.0 (text), MIT (code), MIT (base repo `typer`)
 
 ---
@@ -224,12 +224,12 @@ The contribution we hope is most reusable is the methodology, not the verdict. A
 
 ## Reproducibility
 
-Tested on Ubuntu 22.04 with Python 3.10+ (typer requires `>= 3.10`), `uv` 0.4+, and `anthropic` Python SDK 0.83+. The Qwen executor uses Ollama 0.4+ on a Tailscale-reachable host running model `qwen3.5:9b`, exposed via the `qwen-task --agent` wrapper from `iris-hub/.claude/skills/qwen-task/`.
+Tested on Ubuntu 22.04 with Python 3.10+ (typer requires `>= 3.10`), `uv` 0.4+, and `anthropic` Python SDK 0.83+. The Qwen executor uses Ollama 0.4+ on a Tailscale-reachable host running model `qwen3.5:9b`, exposed via the `qwen-task --agent` wrapper bundled at `scripts/qwen-task.sh` (the wrapper depends on the `claw` binary; see README).
 
 ```bash
-# 1. Clone iris-lab + go to experiment dir
-git clone https://github.com/kenimo49/iris-lab
-cd iris-lab/experiments/025-orchestrator-vs-solo
+# 1. Clone this repo
+git clone https://github.com/kenimo49/free-executor-paradox
+cd free-executor-paradox
 
 # 2. Clone base repo (typer at 0.26.8, commit b210c0e)
 git clone --depth 1 --branch 0.26.8 https://github.com/tiangolo/typer base-repo/typer
@@ -238,7 +238,7 @@ git clone --depth 1 --branch 0.26.8 https://github.com/tiangolo/typer base-repo/
 # 3. Confirm green base on the harness
 ./harness.sh --json-only   # expect exit_code=0, 1356 passed
 
-# 4. Provide ANTHROPIC_API_KEY (env or iris-lab/.env)
+# 4. Provide ANTHROPIC_API_KEY (env or <repo>/.env)
 export ANTHROPIC_API_KEY=...
 
 # 5. (Optional) point at Ollama host for arm B

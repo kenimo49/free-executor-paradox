@@ -26,7 +26,10 @@ from .tools import TOOL_SCHEMAS, ToolExecutor
 OPUS = "claude-opus-4-7"
 HAIKU = "claude-haiku-4-5-20251001"
 
-QWEN_TASK_SH = "/home/iris/repos/iris-hub/.claude/skills/qwen-task/qwen-task.sh"
+QWEN_TASK_SH = os.environ.get(
+    "QWEN_TASK_SH",
+    str(Path(__file__).resolve().parent.parent.parent / "scripts" / "qwen-task.sh"),
+)
 
 
 def _empty_usage() -> dict:
@@ -83,15 +86,15 @@ class TrialResult:
 def _anthropic_client() -> anthropic.Anthropic:
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
-        # Try iris-lab .env
-        env = Path("/home/iris/repos/iris-lab/.env")
+        # Fall back to .env at repo root
+        env = Path(__file__).resolve().parent.parent.parent / ".env"
         if env.exists():
             for line in env.read_text().splitlines():
                 if line.startswith("ANTHROPIC_API_KEY="):
                     key = line.split("=", 1)[1].strip().strip("'\"")
                     break
     if not key:
-        raise RuntimeError("ANTHROPIC_API_KEY not found in env or iris-lab/.env")
+        raise RuntimeError("ANTHROPIC_API_KEY not found in env or .env")
     return anthropic.Anthropic(api_key=key)
 
 

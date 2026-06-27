@@ -81,7 +81,24 @@ free-executor-paradox/
 
 ## Reproducibility
 
-Tested on Ubuntu 22.04 with Python 3.10+, `uv` 0.4+, and `anthropic` Python SDK 0.83+. The Qwen executor uses Ollama 0.4+ on a Tailscale-reachable host running model `qwen3.5:9b`.
+Tested on Ubuntu 22.04 with Python 3.10+, `uv` 0.4+, and `anthropic` Python SDK 0.83+.
+
+The Qwen executor (arm B) uses Ollama 0.4+ running model `qwen3.5:9b`. The wrapper script `scripts/qwen-task.sh` is bundled in this repo; it in turn shells out to [`claw`](https://github.com/anthropics/claw-code) (a small Rust-based agent runner) to drive the tool loop over a local Ollama HTTP endpoint. Arm B configuration:
+
+```bash
+# install claw (one-time)
+git clone https://github.com/anthropics/claw-code ~/claw-code
+(cd ~/claw-code/rust && cargo build)
+export CLAW_BIN=~/claw-code/rust/target/debug/claw
+
+# point at your Ollama host (default http://100.72.192.8:11434)
+export OLLAMA_HOST=http://<your-ollama-host>:11434
+
+# verify
+scripts/qwen-task.sh --list
+```
+
+If arm B is not needed (arms A, C, D are sufficient to reproduce the headline finding), `claw` and Ollama can be skipped.
 
 ```bash
 # 1. Clone this repo
