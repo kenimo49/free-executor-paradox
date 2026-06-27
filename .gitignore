@@ -1,0 +1,27 @@
+# Base repo (typer) is cloned at experiment time, not vendored
+base-repo/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# LaTeX intermediate files
+paper/main.aux
+paper/main.bbl
+paper/main.blg
+paper/main.log
+paper/main.out
+paper/*.toc
+
+# qwen-task agent mode artifacts (left in cwd by claw)
+.claw/
+
+# Trial state markers
+scripts/breakage-pack/.t3-test-sha256
+
+# Local environment
+.env
