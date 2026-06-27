@@ -29,6 +29,15 @@
 The canonical recipe for cost-aware agentic coding---``use a strong model to orchestrate, a cheap model to execute''---fails on every iterative code-repair task we measured. We call this the \emph{free-executor paradox}: when the executor is free at the token meter (a locally hosted Qwen 3.5-9B), the orchestrator's prompt-cached re-reads of the executor's returned summaries grow its own input volume by 1.4--5.3$\times$ over running Opus alone, and the structure becomes the \textbf{most expensive cloud configuration we tested}, not the cheapest. We support the claim with a controlled comparison of four configurations---Opus 4.7 solo, Opus orchestrating Qwen 3.5-9B (free executor), Opus orchestrating Haiku 4.5, and Haiku 4.5 solo---on three Python code-repair tasks (25-error breakage recovery, refactor, feature-add) over 40 trials with $n = 3$ successful runs per cell. Correctness is judged deterministically by \texttt{mypy + ruff + pytest} exit codes; no LLM grades the work. Beyond the paradox, we report two practitioner-level observations: (i)~Haiku solo is 5.5$\times$ cheaper than the cheapest cloud arm on the longest task, but pays a 25\% failure rate at our per-arm iteration cap; (ii)~when Opus does orchestrate, Opus + Haiku---not the free executor---ties Opus solo on the longest task and beats it narrowly on the refactor task. Our headline question is therefore \emph{not} ``which model is best,'' but ``under what task structure does the orchestrator's read-back cost amortize against the executor's per-token savings.'' We provide a harness, runners, and analysis that make this question reproducible on any codebase for about \$36.
 \end{abstract}
 
+\begin{center}
+\fbox{\parbox{0.92\textwidth}{\centering
+\textbf{Artifact} \quad
+Code, raw trial data, figures, and the \LaTeX{} source of this paper are open at\\
+\url{https://github.com/kenimo49/free-executor-paradox} \quad (MIT code, CC-BY 4.0 text). \\
+Zenodo DOI: \emph{to be assigned on upload.}
+}}
+\end{center}
+
 \section{Introduction}
 
 A standard cost-control move in agentic coding is to put a strong, expensive model in charge of planning and reasoning, and to delegate the mechanical edits to a cheap or free executor. The intuition is unambiguous: the executor handles the bulk of the tokens, and the orchestrator only pays for the decisions. We show that this intuition breaks down in the \emph{iterative} regime that drives a deterministic judge to convergence, because the orchestrator is forced to re-read what the executor did on every subsequent iteration.
@@ -260,9 +269,16 @@ C (Opus orchestrating Haiku) & 421{,}622 & 159{,}640 & 44{,}016 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.80\textwidth]{../results/figures/token-growth.png}
-\caption{Free-executor paradox visualized. Each bar is the success-only median of Opus-side (input + cache\_read) tokens for the corresponding task. Even though arm B's executor (Qwen) is free at the token meter, the orchestrator's own context (green bars) is consistently larger than running Opus solo (red). Multipliers in grey annotate the B-over-A and C-over-A ratios per task.}
+\includegraphics[width=0.92\textwidth]{../results/figures/token-growth.png}
+\caption{Free-executor paradox visualized as a token-component breakdown. Each stacked bar is the success-only median of Opus-side tokens for one (task, arm) cell, decomposed into \texttt{cache\_read} (light blue, billed at 0.10$\times$ input rate), \texttt{input} (dark blue, 1.00$\times$), \texttt{cache\_write} (orange, 1.25$\times$), and \texttt{output} (red, 5.00$\times$). Two patterns: (i)~the dominant component is \texttt{cache\_read} (orchestrator re-reading prior turns), not new input or output; (ii)~arm B's bars are the tallest in every task, even though B's executor (Qwen) costs \$0 at the token meter.}
 \label{fig:token-growth}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../results/figures/mechanism.png}
+\caption{Causal chain underlying the paradox. The orchestrator delegates an instruction, the executor edits files and returns a summary string, and that summary is appended to the orchestrator's context. On the \emph{next} turn that summary becomes a \texttt{cache\_write}; on every subsequent turn it becomes part of the \texttt{cache\_read} payload, re-billed at 10\% of the input rate per iteration. Over 30--80 iterations of T1 this loop pays for the entire executor delegation many times over.}
+\label{fig:mechanism}
 \end{figure}
 
 The B-over-A ratio of \texttt{cache\_read} alone is \textbf{1.38$\times$ on T1, 1.39$\times$ on T2, and 5.26$\times$ on T3}. Even though B's executor (Qwen) is free, the orchestrator side of B reads back more cache tokens per iteration than Opus solo. Two observations follow.
@@ -337,6 +353,53 @@ We organize threats to validity along the standard software-engineering empirica
     \item \textbf{Executor summary as proxy for executor output.} The orchestrator never sees the executor's raw work; it sees a truncated summary returned by the \texttt{delegate\_to\_executor} tool. This is how real orchestrator-executor systems are deployed, but it means our paradox quantifies summary read-back, not raw output transfer.
 \end{itemize}
 
+\subsection{Threat Matrix}
+
+Table~\ref{tab:threats} summarizes the threats above, the headline claim each touches, and the mitigation already in place or proposed.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{3.4cm} l p{3.5cm} p{4.5cm}}
+\toprule
+\textbf{Threat} & \textbf{Type} & \textbf{Headline impact} & \textbf{Mitigation in place / proposed} \\
+\midrule
+Sampling non-determinism & Internal & Within-cell variance & report 95\% bootstrap CI (Table~\ref{tab:summary}); future: pin temperature \\
+Iteration cap & Internal & Success rate column & report cost-per-success and CI; future: $n \times 2$ at next cap \\
+Prompt asymmetry (solo vs orch.) & Internal & Cross-arm comparability & document explicitly (\S\ref{sec:budget}); future: symmetric ablation \\
+Small $n$ ($=3$) & Internal & p-value floor at 0.050 & Cliff's delta (Table~\ref{tab:cliffs}) to complement; future: scale $n \to 10$--$20$ \\
+Single repository & External & Generalization & mechanism is repo-independent (\S5.1); future: \texttt{httpx}, \texttt{click}, \texttt{fastapi} \\
+Two cloud models & External & Vendor specificity & cache mechanism is vendor-specific but the structural argument is not; future: GPT-5, Gemini 2 \\
+One local executor & External & Executor-LLM specificity & paradox argument relies on summary-volume, not on Qwen; future: 30B-class local \\
+No parallel delegation & External & Amortization regime & sequential trial structure documented; future: parallel-fanout extension \\
+T3 SHA-256 fingerprint & Construct & T3 specifically & limit T3 claim to spec-following; future: open-spec variant \\
+Harness as oracle & Construct & Code quality unmeasured & we claim correctness only, not maintainability; future: LLM-judge complement \\
+Summary as proxy for output & Construct & Mechanism scope & we measure summary read-back, not raw output; future: enforce summary $\leq$ 500 tokens \\
+\bottomrule
+\end{tabular}
+\caption{Threat matrix. ``Mitigation in place'' refers to the current paper; ``proposed'' is deferred to future work (\S\ref{sec:future}).}
+\label{tab:threats}
+\end{table}
+
+\section{Future Work}
+\label{sec:future}
+
+The mechanism we report has at least four extensions that we view as the most useful next experiments, in roughly increasing cost order.
+
+\paragraph{1. Bounded-summary executors.}
+The orchestrator's cache_read footprint grows with the size of the executor's returned summary. Replacing free-form \texttt{stdout} returns with structured summaries capped at a few hundred tokens (e.g. a JSON diff, a unified-format patch, or a single sentence) should shrink the B/A ratio toward 1.0$\times$ and potentially invert it on T3. We expect this to be the cheapest experiment to run on the existing harness.
+
+\paragraph{2. Larger repositories.}
+Replicating the 4-arm $\times$ 3-task design on \texttt{httpx}, \texttt{click}, and \texttt{fastapi} would address the external-validity gap directly. The mechanism predicts the paradox should hold and that the dollar gap should \emph{widen} on longer trajectories, because cache\_read is the dominant term. A counter-finding (no paradox on \texttt{fastapi}, say) would be diagnostic of repository structure, not of the mechanism.
+
+\paragraph{3. Additional model families.}
+Adding Sonnet 4.6 (between Opus and Haiku in capability and cost) tests whether the paradox is a property of strong-vs-weak pairing in general or specifically of Opus--Haiku. GPT-5 and Gemini 2 (when stable cache pricing is published) extend the test across vendors. We expect the qualitative pattern to hold because prompt caching has converged across vendors, but the precise multipliers depend on rate-card structure.
+
+\paragraph{4. Parallel orchestration.}
+The current design is strictly sequential within a trial. A parallel delegation regime---multiple \texttt{delegate\_to\_executor} calls fanned out per orchestrator turn---would shift the orchestrator's amortization profile, because the orchestrator pays the cache cost \emph{once} for $k$ executor calls instead of $k$ times. This is the most architecturally different extension and the one most likely to surface a regime where arm B wins.
+
+We also intend to mirror the harness on \texttt{cargo check + cargo test} for Rust and on \texttt{go vet + go test} for Go, to verify the mechanism is not a Python-specific artifact.
+
 \section{Conclusion}
 
 We did not set out to declare a winner. We set out to ask whether the cost gap between ``use Opus everywhere'' and ``use Opus to orchestrate something cheap'' is large enough to justify the extra plumbing.
@@ -388,5 +451,122 @@ For arm B specifically: if Ollama / Tailscale are unavailable, arm B trials will
 The \texttt{typer} project (Sebastián Ramírez et al., MIT) provided the substrate. The Qwen team open-sourced the model used in arm B. The Codex CLI from OpenAI was used to perform an independent read-only review of this manuscript prior to revision; review records are linked from the GitHub issue tracker.
 
 \bibliography{references}
+
+\appendix
+
+\section{System prompts}
+\label{app:system-prompts}
+
+All four arms use prompts of the same surface form; the only differences are whether \texttt{delegate\_to\_executor} is mentioned and whether direct editing is encouraged. We include them verbatim because the asymmetry is a confounder we discuss in \S\ref{sec:limitations}.
+
+\subsection{Solo prompt (arms A and D)}
+
+\begin{verbatim}
+You are a code-fixing agent operating in a sandboxed Python repository.
+
+You have two tools:
+- `str_replace_editor`: view / create / str_replace / insert files
+  (paths are repo-relative).
+- `bash`: run shell commands in the repo root (120s timeout).
+
+You will be given a task. Iteratively read code, run the harness, fix
+issues, and re-run until the harness is green. Be concise in your
+reasoning; spend tokens on tool calls, not narration.
+
+When you believe the task is complete and the verifier passes, output a
+single line `DONE` and stop. If you cannot make progress, output
+`BLOCKED: <reason>` and stop.
+\end{verbatim}
+
+\subsection{Orchestrator prompt (arms B and C)}
+
+\begin{verbatim}
+You are the orchestrator of a two-LLM team. You decide WHAT to do; an
+executor LLM (which can read files, edit files, and run shell commands)
+does it for you.
+
+You have three tools:
+- `bash`: run shell commands in the repo root.
+- `str_replace_editor`: read files yourself with `view` when you need to
+  inspect something before instructing the executor. Avoid using
+  create/str_replace -- delegate edits to the executor.
+- `delegate_to_executor`: hand off a concrete edit/refactor instruction
+  to the executor. The executor returns a short summary of what it did.
+  Be precise: name files, name functions, name the exact change. The
+  executor is cheaper but weaker than you, so spell out the change
+  rather than asking it to "figure it out".
+
+Loop: read harness output -> plan -> delegate small chunks -> check
+harness -> repeat until green. Output `DONE` when verifier passes,
+`BLOCKED: <reason>` if stuck.
+\end{verbatim}
+
+\subsection{Executor prompt (arm C only; arm B uses qwen-task default)}
+
+\begin{verbatim}
+You are an execution sub-agent. Another LLM (the orchestrator) has
+handed you a concrete instruction. Do exactly what it asks using
+`str_replace_editor` and `bash`. Do not expand scope. When done, output
+`DONE: <one-line summary>` and stop. If the instruction is impossible
+as written, output `BLOCKED: <reason>` and stop.
+\end{verbatim}
+
+\section{Harness output schema (sample)}
+\label{app:harness}
+
+\texttt{harness.sh --json-only} emits the following structure on a green base (\texttt{exit\_code = 0}):
+
+\begin{verbatim}
+{
+  "exit_code": 0,
+  "elapsed_sec": 22,
+  "mypy":         {"exit": 0, "errors": 0},
+  "ruff_check":   {"exit": 0, "errors": 0},
+  "ruff_format":  {"exit": 0, "errors": 0, "informational": true},
+  "pytest":       {"exit": 0, "passed": 1356, "failed": 0,
+                   "collection_errors": 0}
+}
+\end{verbatim}
+
+\texttt{exit\_code} is the only field the runner consumes for the gate (0 = pass). Per-tool counts are recorded for diagnostics and end up in the per-trial JSONL.
+
+\texttt{verify-T2.sh} and \texttt{verify-T3.sh} wrap \texttt{harness.sh} and add task-specific structural checks (function moved to new module, public API callable, fingerprinted test unchanged); they emit the same outer schema with an extra \texttt{t2\_checks} or \texttt{t3\_checks} block.
+
+\section{Per-trial JSONL schema}
+\label{app:trial-schema}
+
+Each trial appends one JSON object to \texttt{data/results/\{arm\}.jsonl}:
+
+\begin{verbatim}
+{
+  "arm": "C", "task": "T1", "trial": 0,
+  "success": true, "blocked": false,
+  "wall_sec": 400.4, "iterations": 18,
+  "usage_by_role": {
+    "claude-opus-4-7": {
+      "input_tokens": 2050, "output_tokens": 3803,
+      "cache_creation_input_tokens": 17089,
+      "cache_read_input_tokens": 170101
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 15765, "output_tokens": 9774,
+      "cache_creation_input_tokens": 62382,
+      "cache_read_input_tokens": 435940
+    }
+  },
+  "cost_usd_by_role": {
+    "claude-opus-4-7": 0.891545,
+    "claude-haiku-4-5-20251001": 0.186206
+  },
+  "total_cost_usd": 1.077752,
+  "verify_final": {
+    "exit_code": 0,
+    "summary": "exit_code=0, mypy errors=0, ruff errors=0, "
+               "pytest passed=1356 failed=0 collection_errors=0"
+  }
+}
+\end{verbatim}
+
+The 40 trials reported in this paper live in \texttt{data/results/\{A,B,C,D\}.jsonl} and the flattened table is at \texttt{data/trials.csv}.
 
 \end{document}

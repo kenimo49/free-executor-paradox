@@ -248,58 +248,123 @@ def pareto_plot(g: dict, task: str, out_path: Path) -> None:
 
 
 def token_growth_plot(g: dict, out_path: Path) -> None:
-    """Bar chart: Opus input + cache_read per task per arm, B/A and C/A multipliers."""
+    """Stacked bar: Opus token breakdown per task per arm (cache_read / input / cache_write / output)."""
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
+        import numpy as np
     except ImportError:
         return
     tasks = ["T1", "T2", "T3"]
     arms = ["A", "B", "C"]
-    labels = {"A": "A: Opus solo", "B": "B: Opus + Qwen", "C": "C: Opus + Haiku"}
-    colors = {"A": "#d62728", "B": "#2ca02c", "C": "#1f77b4"}
+    labels = {"A": "A:\nOpus solo", "B": "B:\nOpus+Qwen", "C": "C:\nOpus+Haiku"}
+    components = ["cache_read", "input", "cache_write", "output"]
+    comp_labels = {
+        "cache_read":  "cache_read  (0.10x rate)",
+        "input":       "input  (1.00x rate)",
+        "cache_write": "cache_write  (1.25x rate)",
+        "output":      "output  (5.00x rate)",
+    }
+    comp_colors = {
+        "cache_read":  "#a8d8ea",
+        "input":       "#1f77b4",
+        "cache_write": "#ffb347",
+        "output":      "#d62728",
+    }
+    key_map = {
+        "input": "input_tokens",
+        "output": "output_tokens",
+        "cache_write": "cache_creation_input_tokens",
+        "cache_read": "cache_read_input_tokens",
+    }
 
-    def opus_in(arm, task):
+    def opus_med(arm, task, comp):
         ts = [t for t in g.get((arm, task), []) if t["success"]]
         if not ts:
             return 0
         return statistics.median(
-            t["usage_by_role"].get("claude-opus-4-7", {}).get("input_tokens", 0)
-            + t["usage_by_role"].get("claude-opus-4-7", {}).get("cache_read_input_tokens", 0)
-            for t in ts
+            t["usage_by_role"].get("claude-opus-4-7", {}).get(key_map[comp], 0) for t in ts
         )
 
-    import numpy as np
-    x = np.arange(len(tasks))
-    width = 0.27
-    fig, ax = plt.subplots(figsize=(8, 5))
-    for i, arm in enumerate(arms):
-        vals = [opus_in(arm, t) / 1000 for t in tasks]
-        offset = (i - 1) * width
-        bars = ax.bar(x + offset, vals, width, label=labels[arm], color=colors[arm], alpha=0.85)
-        for b, v in zip(bars, vals):
-            ax.text(b.get_x() + b.get_width() / 2, v, f"{v:.0f}k", ha="center", va="bottom", fontsize=9)
+    fig, axes = plt.subplots(1, 3, figsize=(11, 5), sharey=False)
+    for task_idx, task in enumerate(tasks):
+        ax = axes[task_idx]
+        x = np.arange(len(arms))
+        bottom = np.zeros(len(arms))
+        for comp in components:
+            vals = np.array([opus_med(a, task, comp) / 1000 for a in arms])
+            ax.bar(x, vals, 0.65, bottom=bottom,
+                   label=comp_labels[comp] if task_idx == 0 else "",
+                   color=comp_colors[comp], edgecolor="white", linewidth=0.5)
+            bottom += vals
+        for i, a in enumerate(arms):
+            total = sum(opus_med(a, task, c) for c in components) / 1000
+            ax.text(i, total, f"{total:.0f}k", ha="center", va="bottom", fontsize=9, fontweight="bold")
+        ax.set_xticks(x)
+        ax.set_xticklabels([labels[a] for a in arms], fontsize=9)
+        ax.set_title(f"Task {task}", fontsize=11)
+        ax.grid(axis="y", alpha=0.3)
+        ax.set_ylim(0, ax.get_ylim()[1] * 1.18)
+        if task_idx == 0:
+            ax.set_ylabel("Opus-side tokens (x1000, success-only median)")
 
-    # Multiplier annotations B/A and C/A
-    for j, t in enumerate(tasks):
-        a = opus_in("A", t)
-        b = opus_in("B", t)
-        c = opus_in("C", t)
-        if a > 0:
-            txt = f"B/A={b/a:.2f}×\nC/A={c/a:.2f}×"
-            ax.annotate(txt, xy=(j, max(b, a, c) / 1000), xytext=(j, max(b, a, c) / 1000 * 1.18),
-                        ha="center", fontsize=9, color="#555")
+    fig.suptitle("Free-Executor Paradox: Opus token breakdown - cache_read dominates orchestrated arms",
+                 fontsize=12, y=1.00)
+    handles, lbls = axes[0].get_legend_handles_labels()
+    fig.legend(handles, lbls, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.02), fontsize=9)
+    fig.tight_layout(rect=(0, 0.04, 1, 0.98))
+    fig.savefig(out_path, dpi=130, bbox_inches="tight")
+    plt.close(fig)
+    print(f"wrote {out_path}")
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(tasks)
-    ax.set_ylabel("Opus side: input + cache_read tokens (×1000, median)")
-    ax.set_title("Free Executor Paradox: Opus context grows when delegating")
-    ax.legend(loc="upper right")
-    ax.grid(axis="y", alpha=0.3)
-    ax.set_ylim(0, ax.get_ylim()[1] * 1.25)
+
+def mechanism_schematic(out_path: Path) -> None:
+    """Causal-chain schematic of the free-executor paradox."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+    except ImportError:
+        return
+    fig, ax = plt.subplots(figsize=(10, 4.5))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 5)
+    ax.axis("off")
+
+    boxes = [
+        (0.2, 1.5, 1.9, 2.0, "Orchestrator\n(Opus)\nplans next step", "#fce4d6"),
+        (2.6, 1.5, 1.9, 2.0, "delegate_to_executor(\n  instruction)", "#fff3b3"),
+        (5.0, 1.5, 1.9, 2.0, "Executor\n(Qwen / Haiku)\nedits files", "#d4edda"),
+        (7.4, 1.5, 2.4, 2.0, "returns\nsummary string\n(<= 4000 chars)", "#cfe2f3"),
+    ]
+    for x, y, w, h, txt, c in boxes:
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.05",
+                                    facecolor=c, edgecolor="black", linewidth=1.2))
+        ax.text(x + w/2, y + h/2, txt, ha="center", va="center", fontsize=10)
+
+    arrows = [(2.1, 2.5, 2.6, 2.5), (4.5, 2.5, 5.0, 2.5), (6.9, 2.5, 7.4, 2.5)]
+    for x1, y1, x2, y2 in arrows:
+        ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="->,head_width=0.3,head_length=0.4",
+                                     color="#444", linewidth=1.8, mutation_scale=15))
+
+    ax.add_patch(FancyArrowPatch((8.6, 1.5), (1.0, 1.5),
+                                 arrowstyle="->,head_width=0.4,head_length=0.5",
+                                 connectionstyle="arc3,rad=-0.35",
+                                 color="#c0392b", linewidth=2.2, mutation_scale=15))
+    ax.text(5.0, 0.35,
+            "summary appended to orchestrator context\n=> cache_write next turn, cache_read every subsequent turn",
+            ha="center", va="center", fontsize=10, color="#c0392b", fontweight="bold")
+
+    ax.text(5.0, 4.55, "Causal chain of the Free-Executor Paradox",
+            ha="center", va="center", fontsize=13, fontweight="bold")
+    ax.text(5.0, 4.1,
+            "Even though Qwen tokens are $0, every additional turn re-bills the orchestrator for the summary it already saw.",
+            ha="center", va="center", fontsize=10, style="italic", color="#444")
+
     fig.tight_layout()
-    fig.savefig(out_path, dpi=120)
+    fig.savefig(out_path, dpi=130, bbox_inches="tight")
     plt.close(fig)
     print(f"wrote {out_path}")
 
@@ -316,10 +381,11 @@ def main() -> int:
         print(pairwise_cost(g, t))
         print(cliffs_delta_table(g, t))
     if args.plot:
-        OUT_DIR.mkdir(exist_ok=True)
+        OUT_DIR.mkdir(exist_ok=True, parents=True)
         for t in ["T1", "T2", "T3"]:
             pareto_plot(g, t, OUT_DIR / f"pareto-{t}.png")
         token_growth_plot(g, OUT_DIR / "token-growth.png")
+        mechanism_schematic(OUT_DIR / "mechanism.png")
     return 0
 
 
