@@ -24,17 +24,12 @@ if ! [[ "$DOI" =~ ^10\.[0-9]+/.+ ]]; then
   exit 2
 fi
 
-# 1. main.tex — replace the \paperDOI macro body
-sed -i "s|\\\\newcommand{\\\\paperDOI}{[^}]*}|\\\\newcommand{\\\\paperDOI}{\\\\href{https://doi.org/$DOI}{$DOI}}|" paper/main.tex
+# 1. main.tex — replace the \paperDOI macro body (use perl for non-greedy, brace-balanced match)
+perl -i -pe "BEGIN{undef \$/;} s|\\\\newcommand\\{\\\\paperDOI\\}\\{.*?\\}\\}|\\\\newcommand{\\\\paperDOI}{\\\\href{https://doi.org/$DOI}{$DOI}}|s" paper/main.tex
 
-# 2. README.md — replace placeholder + uncomment badge
-sed -i \
-  -e "s|<!-- DOI badge goes here after Zenodo upload:.*|[![DOI](https://zenodo.org/badge/DOI/$DOI.svg)](https://doi.org/$DOI)|" \
-  -e "s|\[!\[DOI\](https://zenodo.org/badge/DOI/10\.5281/zenodo\.XXXXXXX\.svg)\](https://doi.org/10\.5281/zenodo\.XXXXXXX)|[![DOI](https://zenodo.org/badge/DOI/$DOI.svg)](https://doi.org/$DOI)|" \
-  -e "s|doi    = {<TBD after Zenodo upload>}|doi    = {$DOI}|" \
-  README.md
-# Remove the orphan "-->" line if present from the badge comment
-sed -i "/^-->$/d" README.md
+# 2. README.md — delete the entire DOI-badge HTML comment block and insert the live badge in its place
+perl -i -pe "BEGIN{undef \$/;} s|<!-- DOI badge goes here after Zenodo upload:.*?-->|[![DOI](https://zenodo.org/badge/DOI/$DOI.svg)](https://doi.org/$DOI)|s" README.md
+sed -i "s|doi    = {<TBD after Zenodo upload>}|doi    = {$DOI}|" README.md
 
 # 3. Audit log
 echo "$DOI inserted on $(date -u +%Y-%m-%dT%H:%M:%SZ)" > scripts/.doi

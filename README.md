@@ -1,8 +1,6 @@
 # The Free-Executor Paradox
 
-<!-- DOI badge goes here after Zenodo upload:
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
--->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20978074.svg)](https://doi.org/10.5281/zenodo.20978074)
 
 Empirical comparison of four LLM configurations on Python code-repair tasks under a deterministic correctness judge (mypy + ruff + pytest). Paper accompanying the experiment: [paper/main.pdf](paper/main.pdf).
 
@@ -141,7 +139,7 @@ Total Anthropic spend for the 40 trials in this dataset: **\$35.98**.
   title  = {When Free Executors Cost More: The Free-Executor Paradox in Iterative LLM Code-Repair Loops},
   author = {Imoto, Ken},
   year   = {2026},
-  doi    = {<TBD after Zenodo upload>},
+  doi    = {10.5281/zenodo.20978074},
   url    = {https://github.com/kenimo49/free-executor-paradox}
 }
 ```
