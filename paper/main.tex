@@ -14,6 +14,27 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{soul}
+
+% Threat-impact color palette
+\definecolor{impactHigh}{RGB}{255,205,205}
+\definecolor{impactMed}{RGB}{255,236,179}
+\definecolor{impactLow}{RGB}{217,234,211}
+\newcommand{\impH}{\cellcolor{impactHigh}\textbf{High}}
+\newcommand{\impM}{\cellcolor{impactMed}\textbf{Med}}
+\newcommand{\impL}{\cellcolor{impactLow}\textbf{Low}}
+
+% Prompt-diff highlight palette (Appendix A)
+\definecolor{diffShared}{RGB}{96,96,96}
+\definecolor{diffSolo}{RGB}{198,40,40}
+\definecolor{diffOrch}{RGB}{27,94,32}
+\newcommand{\common}[1]{\textcolor{diffShared}{#1}}
+\newcommand{\soloOnly}[1]{\sethlcolor{impactHigh}\hl{#1}}
+\newcommand{\orchOnly}[1]{\sethlcolor{impactLow}\hl{#1}}
+
+% Document-wide DOI placeholder (set once, used everywhere)
+\newcommand{\paperDOI}{\textit{[reserved Zenodo DOI -- replace via \texttt{scripts/insert-doi.sh}]}}
 
 \bibliographystyle{plainnat}
 
@@ -34,7 +55,7 @@ The canonical recipe for cost-aware agentic coding---``use a strong model to orc
 \textbf{Artifact} \quad
 Code, raw trial data, figures, and the \LaTeX{} source of this paper are open at\\
 \url{https://github.com/kenimo49/free-executor-paradox} \quad (MIT code, CC-BY 4.0 text). \\
-Zenodo DOI: \emph{to be assigned on upload.}
+Zenodo DOI: \paperDOI
 }}
 \end{center}
 
@@ -355,29 +376,29 @@ We organize threats to validity along the standard software-engineering empirica
 
 \subsection{Threat Matrix}
 
-Table~\ref{tab:threats} summarizes the threats above, the headline claim each touches, and the mitigation already in place or proposed.
+Table~\ref{tab:threats} summarizes the threats above. The \textbf{Impact} column is a subjective rating of how much each threat could change the paper's headline claim (the free-executor paradox itself, the cost ordering, and the practical guidance), color-coded \colorbox{impactHigh}{High}, \colorbox{impactMed}{Med}, \colorbox{impactLow}{Low}.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{p{3.4cm} l p{3.5cm} p{4.5cm}}
+\begin{tabular}{p{3.3cm} l c p{3.0cm} p{4.0cm}}
 \toprule
-\textbf{Threat} & \textbf{Type} & \textbf{Headline impact} & \textbf{Mitigation in place / proposed} \\
+\textbf{Threat} & \textbf{Type} & \textbf{Impact} & \textbf{Headline effect} & \textbf{Mitigation in place / proposed} \\
 \midrule
-Sampling non-determinism & Internal & Within-cell variance & report 95\% bootstrap CI (Table~\ref{tab:summary}); future: pin temperature \\
-Iteration cap & Internal & Success rate column & report cost-per-success and CI; future: $n \times 2$ at next cap \\
-Prompt asymmetry (solo vs orch.) & Internal & Cross-arm comparability & document explicitly (\S\ref{sec:budget}); future: symmetric ablation \\
-Small $n$ ($=3$) & Internal & p-value floor at 0.050 & Cliff's delta (Table~\ref{tab:cliffs}) to complement; future: scale $n \to 10$--$20$ \\
-Single repository & External & Generalization & mechanism is repo-independent (\S5.1); future: \texttt{httpx}, \texttt{click}, \texttt{fastapi} \\
-Two cloud models & External & Vendor specificity & cache mechanism is vendor-specific but the structural argument is not; future: GPT-5, Gemini 2 \\
-One local executor & External & Executor-LLM specificity & paradox argument relies on summary-volume, not on Qwen; future: 30B-class local \\
-No parallel delegation & External & Amortization regime & sequential trial structure documented; future: parallel-fanout extension \\
-T3 SHA-256 fingerprint & Construct & T3 specifically & limit T3 claim to spec-following; future: open-spec variant \\
-Harness as oracle & Construct & Code quality unmeasured & we claim correctness only, not maintainability; future: LLM-judge complement \\
-Summary as proxy for output & Construct & Mechanism scope & we measure summary read-back, not raw output; future: enforce summary $\leq$ 500 tokens \\
+Prompt asymmetry (solo vs orch.) & Internal & \impH & cross-arm comparability & documented (\S\ref{sec:budget}); future: symmetric ablation \\
+Single repository & External & \impH & generalization beyond \texttt{typer} & mechanism is repo-independent (\S5.1); future: \texttt{httpx}, \texttt{click}, \texttt{fastapi} \\
+Sampling non-determinism & Internal & \impM & within-cell variance & 95\% bootstrap CI (Table~\ref{tab:summary}); future: pin temperature \\
+Iteration cap & Internal & \impM & success-rate column & cost-per-success and CI; future: $n \times 2$ at next cap \\
+Small $n$ ($=3$) & Internal & \impM & p-value floor at 0.050 & Cliff's delta (Table~\ref{tab:cliffs}); future: $n \to 10$--$20$ \\
+Two cloud models & External & \impM & vendor specificity & structural argument is vendor-agnostic; future: GPT-5, Gemini 2 \\
+No parallel delegation & External & \impM & amortization regime & sequential structure documented; future: parallel-fanout extension \\
+T3 SHA-256 fingerprint & Construct & \impM & T3 specifically & T3 claim limited to spec-following; future: open-spec variant \\
+Summary as proxy for output & Construct & \impM & mechanism scope & we measure summary read-back; future: enforce summary $\leq$ 500 tokens \\
+One local executor & External & \impL & executor-LLM specificity & paradox depends on summary volume, not on Qwen; future: 30B-class local \\
+Harness as oracle & Construct & \impL & code-quality unmeasured & we claim correctness only, not maintainability; future: LLM-judge complement \\
 \bottomrule
 \end{tabular}
-\caption{Threat matrix. ``Mitigation in place'' refers to the current paper; ``proposed'' is deferred to future work (\S\ref{sec:future}).}
+\caption{Threat matrix sorted by Impact then Type. ``Mitigation in place'' refers to the current paper; ``proposed'' is deferred to future work (\S\ref{sec:future}). The two High-impact threats---prompt asymmetry and single-repository scope---are also the two most concrete next experiments.}
 \label{tab:threats}
 \end{table}
 
@@ -457,49 +478,38 @@ The \texttt{typer} project (Sebastián Ramírez et al., MIT) provided the substr
 \section{System prompts}
 \label{app:system-prompts}
 
-All four arms use prompts of the same surface form; the only differences are whether \texttt{delegate\_to\_executor} is mentioned and whether direct editing is encouraged. We include them verbatim because the asymmetry is a confounder we discuss in \S\ref{sec:limitations}.
+The four arms use prompts of the same surface form. We render them as a side-by-side diff to make the asymmetry explicit; it is a confounder we discuss in \S\ref{sec:limitations}.
 
-\subsection{Solo prompt (arms A and D)}
+\paragraph{Legend.}
+\colorbox{impactHigh}{Red highlight} = solo-only text (arms A and D). \colorbox{impactLow}{Green highlight} = orchestrator-only text (arms B and C). Unhighlighted text is shared verbatim between both prompts.
 
-\begin{verbatim}
-You are a code-fixing agent operating in a sandboxed Python repository.
+\subsection{Solo (arms A, D) vs orchestrator (arms B, C) --- unified diff}
 
-You have two tools:
-- `str_replace_editor`: view / create / str_replace / insert files
-  (paths are repo-relative).
-- `bash`: run shell commands in the repo root (120s timeout).
+\noindent\fbox{\parbox{0.96\textwidth}{\small\ttfamily
+You are \soloOnly{a code-fixing agent} \orchOnly{the orchestrator of a two-LLM team. You decide WHAT to do; an executor LLM (which can read files, edit files, and run shell commands) does it for you.}
 
-You will be given a task. Iteratively read code, run the harness, fix
-issues, and re-run until the harness is green. Be concise in your
-reasoning; spend tokens on tool calls, not narration.
+\medskip
+\soloOnly{operating in a sandboxed Python repository.}
 
-When you believe the task is complete and the verifier passes, output a
-single line `DONE` and stop. If you cannot make progress, output
-`BLOCKED: <reason>` and stop.
-\end{verbatim}
+\medskip
+You have \soloOnly{two} \orchOnly{three} tools:
 
-\subsection{Orchestrator prompt (arms B and C)}
+\medskip
+\textbullet~bash: run shell commands in the repo root (120s timeout).
 
-\begin{verbatim}
-You are the orchestrator of a two-LLM team. You decide WHAT to do; an
-executor LLM (which can read files, edit files, and run shell commands)
-does it for you.
+\textbullet~str\_replace\_editor: \soloOnly{view / create / str\_replace / insert files (paths are repo-relative).} \orchOnly{read files yourself with `view` when you need to inspect something before instructing the executor. Avoid using create/str\_replace --- delegate edits to the executor.}
 
-You have three tools:
-- `bash`: run shell commands in the repo root.
-- `str_replace_editor`: read files yourself with `view` when you need to
-  inspect something before instructing the executor. Avoid using
-  create/str_replace -- delegate edits to the executor.
-- `delegate_to_executor`: hand off a concrete edit/refactor instruction
-  to the executor. The executor returns a short summary of what it did.
-  Be precise: name files, name functions, name the exact change. The
-  executor is cheaper but weaker than you, so spell out the change
-  rather than asking it to "figure it out".
+\textbullet~\orchOnly{delegate\_to\_executor: hand off a concrete edit/refactor instruction to the executor. The executor returns a short summary of what it did. Be precise: name files, name functions, name the exact change. The executor is cheaper but weaker than you, so spell out the change rather than asking it to ``figure it out''.}
 
-Loop: read harness output -> plan -> delegate small chunks -> check
-harness -> repeat until green. Output `DONE` when verifier passes,
-`BLOCKED: <reason>` if stuck.
-\end{verbatim}
+\medskip
+You will be given a task. Iteratively read code, run the harness, fix issues, and re-run until the harness is green. \soloOnly{Be concise in your reasoning; spend tokens on tool calls, not narration.} \orchOnly{Loop: read harness output -> plan -> delegate small chunks -> check harness -> repeat until green.}
+
+\medskip
+When you believe the task is complete and the verifier passes, output a single line `DONE' and stop. If you cannot make progress, output `BLOCKED: <reason>' and stop.
+}}
+
+\paragraph{What the diff implies.}
+The orchestrator prompt explicitly asks the model to \emph{avoid editing directly}; the solo prompt does not constrain editing. This is a fair representation of how the structures are deployed in practice, but it is a confounder for any ``structure alone'' comparison: arm A/D may be advantaged by full editing freedom independent of model capability. Resolving this with a symmetric ablation is item 1 of our internal-validity future work (\S\ref{sec:future}).
 
 \subsection{Executor prompt (arm C only; arm B uses qwen-task default)}
 
