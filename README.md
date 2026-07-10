@@ -159,3 +159,7 @@ Ken Imoto ([@kenimo49](https://github.com/kenimo49)), Propel-Lab LLC.
 ## License
 
 Code: MIT. Paper text and figures: CC-BY 4.0.
+
+---
+
+If this project saved you time, you can [sponsor its continued maintenance](https://github.com/sponsors/kenimo49).
