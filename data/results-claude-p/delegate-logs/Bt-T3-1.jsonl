@@ -1,0 +1,2 @@
+{"mode": "typed", "task": "T3", "instr_chars": 776, "exec_out_chars": 8059, "returned_chars": 196, "exec_sec": 82.2, "format_sec": 26.6, "exit": 0}
+{"mode": "typed", "task": "T3", "instr_chars": 589, "exec_out_chars": 8506, "returned_chars": 159, "exec_sec": 146.9, "format_sec": 24.9, "exit": 0}

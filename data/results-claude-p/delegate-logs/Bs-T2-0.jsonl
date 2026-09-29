@@ -1,0 +1,16 @@
+{"mode": "short", "task": "T2", "instr_chars": 2859, "exec_out_chars": 2270, "returned_chars": 321, "exec_sec": 59.3, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 2985, "exec_out_chars": 2808, "returned_chars": 321, "exec_sec": 76.4, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 318, "exec_out_chars": 8555, "returned_chars": 321, "exec_sec": 84.2, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 306, "exec_out_chars": 18337, "returned_chars": 321, "exec_sec": 71.8, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 3975, "exec_out_chars": 12492, "returned_chars": 321, "exec_sec": 296.4, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 451, "exec_out_chars": 3300, "returned_chars": 321, "exec_sec": 22.0, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 64, "exec_out_chars": 13011, "returned_chars": 321, "exec_sec": 108.2, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T2", "instr_chars": 87, "exec_out_chars": 21184, "returned_chars": 4035, "exec_sec": 131.0, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 4090, "exec_out_chars": 62278, "returned_chars": 321, "exec_sec": 204.1, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 3967, "exec_out_chars": 37428, "returned_chars": 321, "exec_sec": 480.9, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 756, "exec_out_chars": 4942, "returned_chars": 321, "exec_sec": 61.9, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T2", "instr_chars": 824, "exec_out_chars": 10087, "returned_chars": 4035, "exec_sec": 96.4, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 710, "exec_out_chars": 8448, "returned_chars": 321, "exec_sec": 64.7, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 437, "exec_out_chars": 53520, "returned_chars": 321, "exec_sec": 369.7, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 228, "exec_out_chars": 9432, "returned_chars": 321, "exec_sec": 82.0, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 283, "exec_out_chars": 11645, "returned_chars": 321, "exec_sec": 86.1, "format_sec": 0.0, "exit": 0}

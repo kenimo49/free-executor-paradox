@@ -1,0 +1,8 @@
+{"mode": "short", "task": "T2", "instr_chars": 5037, "exec_out_chars": 53229, "returned_chars": 321, "exec_sec": 429.8, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 1082, "exec_out_chars": 39272, "returned_chars": 321, "exec_sec": 394.4, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 992, "exec_out_chars": 34008, "returned_chars": 321, "exec_sec": 283.9, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 609, "exec_out_chars": 21561, "returned_chars": 321, "exec_sec": 112.1, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 870, "exec_out_chars": 64705, "returned_chars": 321, "exec_sec": 362.0, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 142, "exec_out_chars": 3590, "returned_chars": 321, "exec_sec": 32.6, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 230, "exec_out_chars": 7504, "returned_chars": 321, "exec_sec": 70.4, "format_sec": 0.0, "exit": 0}
+{"mode": "short", "task": "T2", "instr_chars": 288, "exec_out_chars": 15018, "returned_chars": 321, "exec_sec": 113.9, "format_sec": 0.0, "exit": 0}

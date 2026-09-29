@@ -1,0 +1,6 @@
+{"mode": "free", "task": "T3", "instr_chars": 1431, "exec_out_chars": 17186, "returned_chars": 4035, "exec_sec": 102.3, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 519, "exec_out_chars": 3317, "returned_chars": 3331, "exec_sec": 32.2, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 495, "exec_out_chars": 11633, "returned_chars": 4035, "exec_sec": 143.9, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 1007, "exec_out_chars": 45547, "returned_chars": 4035, "exec_sec": 225.1, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 658, "exec_out_chars": 11072, "returned_chars": 4035, "exec_sec": 101.1, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 590, "exec_out_chars": 5258, "returned_chars": 4035, "exec_sec": 53.9, "format_sec": 0.0, "exit": 0}

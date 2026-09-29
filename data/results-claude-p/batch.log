@@ -1,0 +1,99 @@
+=== 02:04 B T3 0
+{"arm": "B", "task": "T3", "trial": 0, "success": true, "wall_sec": 375.6, "num_turns": 14, "n_delegate": 2, "returned_chars": 8070, "total_cost_usd": 0.3955225}
+=== 02:10 Bs T3 0
+{"arm": "Bs", "task": "T3", "trial": 0, "success": true, "wall_sec": 236.5, "num_turns": 9, "n_delegate": 1, "returned_chars": 321, "total_cost_usd": 0.22988349999999996}
+=== 02:15 A T2 0
+{"arm": "A", "task": "T2", "trial": 0, "success": true, "wall_sec": 171.8, "num_turns": 20, "n_delegate": 0, "returned_chars": 0, "total_cost_usd": 0.6563225000000001}
+=== 02:18 B T2 0
+{"arm": "B", "task": "T2", "trial": 0, "success": true, "wall_sec": 2923.7, "num_turns": 61, "n_delegate": 21, "returned_chars": 81621, "total_cost_usd": 3.5367949999999997}
+=== 03:07 Bs T2 0
+{"arm": "Bs", "task": "T2", "trial": 0, "success": true, "wall_sec": 2623.1, "num_turns": 55, "n_delegate": 16, "returned_chars": 12564, "total_cost_usd": 2.2773879999999993}
+=== 03:51 Bt T2 0
+{"arm": "Bt", "task": "T2", "trial": 0, "success": true, "wall_sec": 5282.1, "num_turns": 81, "n_delegate": 18, "returned_chars": 3946, "total_cost_usd": 3.703954499999999}
+=== 05:20 A T1 0
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 111, in <module>
+    sys.exit(main())
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 67, in main
+    harness_io.setup_task(a.task)
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 78, in setup_task
+    inject_T1()
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 57, in inject_T1
+    subprocess.run(
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/home/iris/repos/free-executor-paradox/scripts/breakage-pack/inject-breakage.py']' returned non-zero exit status 2.
+  (fail or timeout)
+=== 05:20 B T1 0
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 111, in <module>
+    sys.exit(main())
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 67, in main
+    harness_io.setup_task(a.task)
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 78, in setup_task
+    inject_T1()
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 57, in inject_T1
+    subprocess.run(
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/home/iris/repos/free-executor-paradox/scripts/breakage-pack/inject-breakage.py']' returned non-zero exit status 2.
+  (fail or timeout)
+=== 05:20 Bs T1 0
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 111, in <module>
+    sys.exit(main())
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 67, in main
+    harness_io.setup_task(a.task)
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 78, in setup_task
+    inject_T1()
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 57, in inject_T1
+    subprocess.run(
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/home/iris/repos/free-executor-paradox/scripts/breakage-pack/inject-breakage.py']' returned non-zero exit status 2.
+  (fail or timeout)
+=== 05:20 Bt T1 0
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 111, in <module>
+    sys.exit(main())
+  File "/home/iris/repos/free-executor-paradox/scripts/claude_p/runner.py", line 67, in main
+    harness_io.setup_task(a.task)
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 78, in setup_task
+    inject_T1()
+  File "/home/iris/repos/free-executor-paradox/scripts/runners/harness_io.py", line 57, in inject_T1
+    subprocess.run(
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/home/iris/repos/free-executor-paradox/scripts/breakage-pack/inject-breakage.py']' returned non-zero exit status 2.
+  (fail or timeout)
+=== 05:20 A T3 1
+{"arm": "A", "task": "T3", "trial": 1, "success": true, "wall_sec": 93.4, "num_turns": 13, "n_delegate": 0, "returned_chars": 0, "total_cost_usd": 0.46094900000000005}
+=== 05:21 B T3 1
+{"arm": "B", "task": "T3", "trial": 1, "success": true, "wall_sec": 831.3, "num_turns": 28, "n_delegate": 6, "returned_chars": 23506, "total_cost_usd": 0.8937025000000001}
+=== 05:36 Bs T3 1
+{"arm": "Bs", "task": "T3", "trial": 1, "success": true, "wall_sec": 440.9, "num_turns": 15, "n_delegate": 3, "returned_chars": 963, "total_cost_usd": 0.42584000000000005}
+=== 05:43 Bt T3 1
+{"arm": "Bt", "task": "T3", "trial": 1, "success": true, "wall_sec": 379.2, "num_turns": 13, "n_delegate": 2, "returned_chars": 355, "total_cost_usd": 0.308025}
+=== 05:50 A T2 1
+{"arm": "A", "task": "T2", "trial": 1, "success": true, "wall_sec": 171.0, "num_turns": 22, "n_delegate": 0, "returned_chars": 0, "total_cost_usd": 0.7785724999999999}
+=== 05:53 B T2 1
+{"arm": "B", "task": "T2", "trial": 1, "success": true, "wall_sec": 1544.8, "num_turns": 44, "n_delegate": 10, "returned_chars": 38444, "total_cost_usd": 1.998028}
+=== 06:20 Bs T2 1
+{"arm": "Bs", "task": "T2", "trial": 1, "success": true, "wall_sec": 2010.5, "num_turns": 34, "n_delegate": 8, "returned_chars": 2568, "total_cost_usd": 1.144276}
+=== 06:54 Bt T2 1

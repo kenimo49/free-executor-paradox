@@ -1,0 +1,2 @@
+{"mode": "free", "task": "T3", "instr_chars": 785, "exec_out_chars": 4827, "returned_chars": 4035, "exec_sec": 80.4, "format_sec": 0.0, "exit": 0}
+{"mode": "free", "task": "T3", "instr_chars": 1874, "exec_out_chars": 9974, "returned_chars": 4035, "exec_sec": 185.8, "format_sec": 0.0, "exit": 0}

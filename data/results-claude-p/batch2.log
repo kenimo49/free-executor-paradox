@@ -1,0 +1,25 @@
+=== 07:38 A T1 0
+{"arm": "A", "task": "T1", "trial": 0, "success": true, "wall_sec": 236.1, "num_turns": 43, "n_delegate": 0, "returned_chars": 0, "total_cost_usd": 1.3973579999999999}
+=== 07:42 B T1 0
+{"arm": "B", "task": "T1", "trial": 0, "success": false, "wall_sec": 3179.9, "num_turns": 81, "n_delegate": 21, "returned_chars": 72180, "total_cost_usd": 3.3785940000000005}
+  (fail or timeout)
+=== 08:35 Bs T1 0
+{"arm": "Bs", "task": "T1", "trial": 0, "success": true, "wall_sec": 3108.8, "num_turns": 83, "n_delegate": 32, "returned_chars": 13986, "total_cost_usd": 2.663779999999999}
+=== 09:28 Bt T1 0
+{"arm": "Bt", "task": "T1", "trial": 0, "success": false, "wall_sec": 4213.4, "num_turns": 81, "n_delegate": 32, "returned_chars": 8437, "total_cost_usd": 2.9713719999999997}
+  (fail or timeout)
+=== 10:38 Bt T2 1
+{"arm": "Bt", "task": "T2", "trial": 1, "success": false, "wall_sec": 4288.2, "num_turns": 81, "n_delegate": 19, "returned_chars": 4469, "total_cost_usd": 3.7219075000000004}
+  (fail or timeout)
+=== 11:50 A T1 1
+{"arm": "A", "task": "T1", "trial": 1, "success": true, "wall_sec": 323.6, "num_turns": 45, "n_delegate": 0, "returned_chars": 0, "total_cost_usd": 1.4535549999999997}
+=== 11:56 B T1 1
+{"arm": "B", "task": "T1", "trial": 1, "success": true, "wall_sec": 2977.7, "num_turns": 80, "n_delegate": 24, "returned_chars": 85571, "total_cost_usd": 4.209554}
+=== 12:46 Bs T1 1
+{"arm": "Bs", "task": "T1", "trial": 1, "success": false, "wall_sec": 1726.6, "num_turns": 81, "n_delegate": 22, "returned_chars": 35579, "total_cost_usd": 4.029472}
+  (fail or timeout)
+=== 13:16 Bt T1 1
+{"arm": "Bt", "task": "T1", "trial": 1, "success": false, "wall_sec": 4100.5, "num_turns": 81, "n_delegate": 32, "returned_chars": 23526, "total_cost_usd": 3.6076779999999995}
+  (fail or timeout)
+=== 14:24 A T3 2
+=== stopped after trial 1 14:24 (3回目は回さない)
